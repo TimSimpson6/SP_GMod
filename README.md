@@ -1,3 +1,7 @@
+# Форк SP_GMod, от https://github.com/kosmik641
+
+# Добавлен новый функционал
+
 # SP_GMod
 ### Скрипты для работы [Metrostroi](https://github.com/metrostroi-repo/MetrostroiAddon) с тренажером 81-717 (ООО "ПО "Зарница").
 
