@@ -532,7 +532,7 @@ void UARTFrontView717::DataExchangeInputs()
 	inTable["AV3"].val = m_Signals.arrInput[187];
 	//inTable["UPPS_On"].val = m_Signals.arrInput[188]; // TODO
 
-	inTable["EmergencyBrakeValve"].val = !ADCStopcrane(m_Signals.arrADC[0]);
+	inTable["EmergencyBrakeValve"].val = m_Signals.arrInput[0];//Теперь экстреный тормоз не ADC //!ADCStopcrane(m_Signals.arrADC[0]);
 	inTable["CranePosition"].val = ADCKM013(m_Signals.arrADC[1]) * 1000;
 
 	LeaveCriticalSection(&m_CriticalSection);
@@ -544,6 +544,39 @@ void UARTFrontView717::DataExchangeOutputs()
 
 	// Индикация
 	auto& outTable = m_NW2VarTableOutput.VarTable;
+	if (outTable["CabLights"].val)//Логика работы слабого и сильного освещения кабины
+	{
+		if (outTable["EqLights"].val)//Если включен тумблер освещение слаб и освещение сильн
+		{
+			// Горит только осв слаб
+			m_Signals.arrOutput[1] = true;//Освещение слаб
+			m_Signals.arrOutput[2] = true;//Освещение сильн
+		}
+		else//Если включен только тумблер освещение слаб
+		{
+			// Горит освещение слаб и освещение сильн
+			m_Signals.arrOutput[1] = true;
+			m_Signals.arrOutput[2] = false;
+		}
+	}
+	else
+	{
+		if (outTable["EqLights"].val)//Если включен только тумблер освещение сильн
+		{
+			// Горит только осв слаб
+			m_Signals.arrOutput[1] = true;//Освещение слаб
+			m_Signals.arrOutput[2] = false;//Освещение сильн
+		}
+		else//все тумблеры выключены
+		{
+			// Осв выключено
+			m_Signals.arrOutput[1] = false;//Освещение слаб
+			m_Signals.arrOutput[2] = false;//Освещение сильн
+		}
+	}
+	m_Signals.arrOutput[3] = outTable["PanelLights"].val;//Освещение приборов
+	m_Signals.arrOutput[4] = outTable["EqLights"].val;//Освещение отсека
+	
 	m_Signals.arrOutput[200] = outTable["AR04"].val;
 	m_Signals.arrOutput[201] = outTable["AR0"].val;
 	m_Signals.arrOutput[202] = outTable["AR40"].val;
